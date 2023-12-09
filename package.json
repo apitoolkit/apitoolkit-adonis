@@ -1,7 +1,7 @@
 {
-  "name": "adonis-test",
+  "name": "apitoolkit-adonis",
   "version": "1.2.1",
-  "description": "",
+  "description": "APIToolkit SDK for adonisjs",
   "main": "build/providers/APIToolkitProvider.js",
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dawkaka/adonis-test.git"
+    "url": "https://github.com/apitoolkit/apitoolkit-adonis.git"
   },
   "author": "",
   "license": "MIT",
@@ -55,9 +55,9 @@
   ],
   "adonisjs": {
     "instructionsMd": "./build/instructions.md",
-    "types": "adonis-test",
+    "types": "apitoolkit-adonis",
     "providers": [
-      "adonis-test"
+      "apitoolkit-adonis"
     ],
     "templates": {
       "config": [

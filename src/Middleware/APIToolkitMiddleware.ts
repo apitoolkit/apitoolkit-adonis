@@ -26,7 +26,9 @@ export class APIToolkitMiddleware {
     #config: APIToolkitConfig;
     publishMessage: (payload: Payload) => void;
     constructor(private app: ApplicationContract) {
-
+        this.app.container.singleton("APIToolkit", () => {
+            return this
+        })
         let config = this.app.container.resolveBinding('Adonis/Core/Config').merge('apitoolkit.apitoolkitConfig', defaultConfig) as APIToolkitConfig
 
         let { rootURL = 'https://app.apitoolkit.io', clientMetadata } = config;

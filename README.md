@@ -17,7 +17,7 @@ npm install apitoolkit-adonis
 node ace configure apitoolkit-adonis
 ```
 
-** Edit `start/kernel.ts`** add `@ioc:APIToolkit` to your global middlewares list
+Edit `start/kernel.ts` to add `@ioc:APIToolkit` to your global middlewares list
 
 ```js
 

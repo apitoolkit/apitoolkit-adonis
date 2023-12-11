@@ -12,17 +12,12 @@ Run the following command to install the package from your projects root:
 
 ```sh
 npm install apitoolkit-adonis
-```
 
-### Project setup
-
-After installing the `apitoolkit-adonis` SDK, run the following command to configure it in your adonis project
-
-```bash
+# configure apitoolkit for your adonis project
 node ace configure apitoolkit-adonis
 ```
 
-Then add `@ioc:APIToolkit` to your global middlewares list in the `start/kernel.ts` file
+** Edit `start/kernel.ts`** add `@ioc:APIToolkit` to your global middlewares list
 
 ```js
 

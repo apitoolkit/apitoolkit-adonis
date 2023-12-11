@@ -2,29 +2,22 @@
 <img src="https://apitoolkit.io/assets/img/logo-full.svg" alt="APIToolkit" width="250px" />
 </p>
 
-## APIToolkit Adonisjs integration.
+# APIToolkit Adonisjs integration.
 
 The Adonisjs SDK integration guide for APIToolkit. It monitors incoming traffic, gathers the requests, and sends the request to the API toolkit servers.
 
-### Installation
+## Installation
 
 Run the following command to install the package from your projects root:
 
 ```sh
 npm install apitoolkit-adonis
-```
 
-### Configure the adonis package using ace
-
-After installing the `apitoolkit-adonis` SDK, run the following command to configure it in your adonis project
-
-```bash
+# configure apitoolkit for your adonis project
 node ace configure apitoolkit-adonis
 ```
 
-### Register the middleware
-
-Then add `@ioc:APIToolkit` to your global middlewares list in the `start/kernel.ts` file
+Edit `start/kernel.ts` to add `@ioc:APIToolkit` to your global middlewares list
 
 ```js
 
@@ -57,7 +50,7 @@ export const apitoolkitConfig = {
 After configuring the sdk, all incoming request will now be send to APIToolkit.
 
 
-## Redacting Senstive Fields and Headers
+### Redacting Senstive Fields and Headers
 
 While it's possible to mark a field as redacted from the apitoolkit dashboard, this client also supports redacting at the client side. Client side redacting means that those fields would never leave your servers at all. So you feel safer that your sensitive data only stays on your servers.
 

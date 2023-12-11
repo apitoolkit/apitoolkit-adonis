@@ -14,13 +14,15 @@ Run the following command to install the package from your projects root:
 npm install apitoolkit-adonis
 ```
 
-### Project setup
+### Configure the adonis package using ace
 
 After installing the `apitoolkit-adonis` SDK, run the following command to configure it in your adonis project
 
 ```bash
 node ace configure apitoolkit-adonis
 ```
+
+### Register the middleware
 
 Then add `@ioc:APIToolkit` to your global middlewares list in the `start/kernel.ts` file
 
@@ -81,7 +83,8 @@ Simply wrap your axios instance with the APIToolkit observeAxios function.
 
 ```typescript
 import Route from '@ioc:Adonis/Core/Route'
-import { observeAxios } from "apitoolkit-adonis";
+import { observeAxios } from "apitoolkit-adonis"
+import axios from "axios"
 
 const redactHeadersList = ["Content-Type", "Authorization"];
 const redactRequestBodyList = ["$.body.user.name"];
@@ -100,6 +103,7 @@ If you're making requests to endpoints which have variable urlPaths, you should 
 
 ```typescript
 import { observeAxios } from "apitoolkit-adonis";
+import axios from "axios"
 
 const response = await observeAxios(axios, "/users/{user_id}").get(
   `${baseURL}/users/user1234`,
@@ -110,6 +114,7 @@ There are other optional arguments you could pass on to the observeAxios functio
 
 ```typescript
 import Route from '@ioc:Adonis/Core/Route'
+import axios from "axios"
 import { observeAxios } from "apitoolkit-adonis";
 
 const redactHeadersList = ["Content-Type", "Authorization"];

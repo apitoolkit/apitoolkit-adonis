@@ -30,7 +30,7 @@ Server.middleware.register([
 
 ### Configuration
 
-To configure the sdk first create an `apitoolkit.ts` file in the `/conf` directory
+To configure the sdk first create an `apitoolkit.ts` file in the `/config` directory
 and export a `apitoolkitConfig` object with the following properties
 
 - *apiKey*: `required` This API key can be generated from your [APIToolkit acount](https://app.apitoolkit.io)

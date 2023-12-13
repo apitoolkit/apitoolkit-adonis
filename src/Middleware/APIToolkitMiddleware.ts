@@ -7,7 +7,7 @@ import fetch from 'sync-fetch';
 import { v4 as uuidv4 } from 'uuid';
 import { APIToolkitConfig, ClientMetadata } from "@ioc:APIToolkit";
 
-import { buildPayload, asyncLocalStorage } from 'apitoolkit-js';
+import { buildPayload } from 'apitoolkit-js';
 import { Payload } from "../payload";
 
 const defaultConfig = {
@@ -46,7 +46,6 @@ export class APIToolkitMiddleware {
             console.log('apitoolkit:  initialized successfully');
             console.dir(pubsubClient);
         }
-
 
         this.#topicName = topic_id;
         this.#pubsub = pubsubClient
@@ -103,55 +102,46 @@ export class APIToolkitMiddleware {
         next: () => Promise<void>
     ) {
         const start_time = process.hrtime.bigint();
-        asyncLocalStorage.run(new Map(), async () => {
-            asyncLocalStorage.getStore()!.set('AT_client', this);
-            asyncLocalStorage.getStore()!.set('AT_project_id', this.#project_id);
-            asyncLocalStorage.getStore()!.set('AT_config', this.#config);
-            asyncLocalStorage.getStore()!.set('AT_errors', []);
-            const msg_id: string = uuidv4();
-            asyncLocalStorage.getStore()!.set('AT_msg_id', msg_id);
+        let reqBody = this.getSafeBody(request.body());
+        await next()
+        const msg_id: string = uuidv4();
+        if (this.#config?.debug) {
+            console.log('APIToolkit: adonisjs middleware called');
+        }
+        let respBody = this.getSafeBody(response.getBody());
+        const errors = [];
+        if (this.#project_id) {
+            const payload = buildPayload({
+                start_time,
+                reqBody,
+                respBody,
+                requestHeaders: request.headers,
+                responseHeaders: response.getHeaders(),
+                reqParams: request.params(),
+                status_code: response.response.statusCode,
+                raw_url: request.url(true),
+                url_path: request.ctx?.route?.pattern || "",
+                reqQuery: request.qs(),
+                method: request.method(),
+                host: request.hostname() || "",
+                redactHeaderLists: this.#config?.redactHeaders ?? [],
+                redactRequestBody: this.#config?.redactRequestBody ?? [],
+                redactResponseBody: this.#config?.redactResponseBody ?? [],
+                errors,
+                sdk_type: "JsAdonis",
+                service_version: this.#config?.serviceVersion,
+                tags: this.#config?.tags ?? [],
+                msg_id,
+                parent_id: undefined,
+                project_id: this.#project_id,
+            });
 
             if (this.#config?.debug) {
-                console.log('APIToolkit: adonisjs middleware called');
+                console.log('APIToolkit: publish prepared payload ');
+                console.dir(payload);
             }
-            await next()
-            let reqBody = this.getSafeBody(request.body());
-            let respBody = this.getSafeBody(response.getBody());
-
-            const errors = asyncLocalStorage.getStore()?.get('AT_errors') ?? [];
-            if (this.#project_id) {
-                const payload = buildPayload({
-                    start_time,
-                    reqBody,
-                    respBody,
-                    requestHeaders: request.headers,
-                    responseHeaders: response.getHeaders(),
-                    reqParams: request.params(),
-                    status_code: response.response.statusCode,
-                    raw_url: request.url(true),
-                    url_path: request.ctx?.route?.pattern || "",
-                    reqQuery: request.qs(),
-                    method: request.method(),
-                    host: request.hostname() || "",
-                    redactHeaderLists: this.#config?.redactHeaders ?? [],
-                    redactRequestBody: this.#config?.redactRequestBody ?? [],
-                    redactResponseBody: this.#config?.redactResponseBody ?? [],
-                    errors,
-                    sdk_type: "JsAdonis",
-                    service_version: this.#config?.serviceVersion,
-                    tags: this.#config?.tags ?? [],
-                    msg_id,
-                    parent_id: undefined,
-                    project_id: this.#project_id,
-                });
-
-                if (this.#config?.debug) {
-                    console.log('APIToolkit: publish prepared payload ');
-                    console.dir(payload);
-                }
-                this.publishMessage(payload);
-            }
-        });
+            this.publishMessage(payload);
+        }
     }
 
     getSafeBody(rqb: any): string {

@@ -1,5 +1,4 @@
 import { APIToolkitMiddleware } from "../src/Middleware/APIToolkitMiddleware"
 
-export { ReportError } from "../src/Middleware/APIToolkitMiddleware"
-export { observeAxios } from "../src/axios"
+export { observeAxios, ReportError } from "apitoolkit-js"
 export default APIToolkitMiddleware

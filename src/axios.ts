@@ -2,7 +2,6 @@ import { HttpContext } from "@adonisjs/core/build/standalone";
 import {
     AxiosError,
     AxiosInstance,
-    AxiosRequestConfig,
     AxiosResponse,
     InternalAxiosRequestConfig,
 } from "axios";
@@ -23,7 +22,6 @@ export const onRequest = (
 };
 
 export const onRequestError = (error: AxiosError): Promise<AxiosError> => {
-    console.error(`[request error] [${JSON.stringify(error)}]`);
     return Promise.reject(error);
 };
 
@@ -66,7 +64,7 @@ export const onResponse =
                 reqQuery: queryParams,
                 reqBody,
                 respBody,
-                sdk_type: "JSAxiosOutgoing" as any,
+                sdk_type: "JsAxiosOutgoing" as any,
                 redactRequestBody: redactRequestBody,
                 redactResponseBody: redactResponseBody,
                 redactHeaderLists: redactHeaderLists,

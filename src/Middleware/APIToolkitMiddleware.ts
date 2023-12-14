@@ -1,5 +1,6 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import HttpContext, { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { HttpContext } from "@adonisjs/core/build/standalone";
 import { inject } from '@adonisjs/core/build/standalone'
 
 import { PubSub, Topic } from '@google-cloud/pubsub';

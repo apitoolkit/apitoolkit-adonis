@@ -127,7 +127,7 @@ export class APIToolkitMiddleware {
             console.log('APIToolkit: adonisjs middleware called');
         }
         let respBody = this.getSafeBody(response.getBody());
-        const errors = [];
+        const errors = ctx?.apitoolkitData.errors || [];
         if (this.#project_id) {
             const payload = buildPayload({
                 start_time,

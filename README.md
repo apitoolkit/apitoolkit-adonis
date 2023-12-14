@@ -79,28 +79,27 @@ import Route from '@ioc:Adonis/Core/Route'
 import { observeAxios } from "apitoolkit-adonis"
 import axios from "axios"
 
-const redactHeadersList = ["Content-Type", "Authorization"];
-const redactRequestBodyList = ["$.body.user.name"];
-const redactResponseBodyList = undefined;
 
 Route.get('/observer', async () => {
-  try {
     const response = await observeAxios(axios).get(`${baseURL}/user_list/active`);
-  } catch (error) {
-    ReportError(error)
-  }
+    return response.data;
 }
 ```
 
 If you're making requests to endpoints which have variable urlPaths, you should include a wildcard url of the path, so that apitoolkit groups the endpoints correctly for you on the dashboard:
 
 ```typescript
+import Route from '@ioc:Adonis/Core/Route'
 import { observeAxios } from "apitoolkit-adonis";
 import axios from "axios"
 
-const response = await observeAxios(axios, "/users/{user_id}").get(
-  `${baseURL}/users/user1234`,
-);
+Route.get('/observer', async () => {
+    const response = await observeAxios(axios, "/users/{user_id}").get(
+      `${baseURL}/users/user1234`,
+    );
+    return response.data;
+}
+
 ```
 
 There are other optional arguments you could pass on to the observeAxios function, eg:
@@ -122,6 +121,8 @@ Route.get('/observer', async () => {
       redactRequestBodyList,
       redactResponseBodyList,
     ).get(`${baseURL}/users/user1234`);
+    
+    return {hello: "world"}
 })
 ```
 

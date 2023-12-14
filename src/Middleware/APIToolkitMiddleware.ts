@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { APIToolkitConfig, ClientMetadata } from "@ioc:APIToolkit";
 
 import { buildPayload } from 'apitoolkit-js';
-import { Payload } from "../payload";
+import { ATError, Payload } from "../payload";
 
 const defaultConfig = {
     rootURL: 'https://app.apitoolkit.io',
@@ -21,7 +21,7 @@ declare module '@ioc:Adonis/Core/HttpContext' {
         apitoolkitData: {
             client: APIToolkitMiddleware;
             msg_id: string;
-            errors: any[];
+            errors: ATError[];
             config: APIToolkitConfig;
             project_id: string;
         };

@@ -1,5 +1,5 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import HttpContext, { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { inject } from '@adonisjs/core/build/standalone'
 
 import { PubSub, Topic } from '@google-cloud/pubsub';
@@ -14,6 +14,18 @@ const defaultConfig = {
     rootURL: 'https://app.apitoolkit.io',
     debug: false,
 };
+
+declare module '@ioc:Adonis/Core/HttpContext' {
+    interface HttpContextContract {
+        apitoolkitData: {
+            client: APIToolkitMiddleware;
+            msg_id: string;
+            errors: any[];
+            config: APIToolkitConfig;
+            project_id: string;
+        };
+    }
+}
 
 @inject(['Adonis/Core/Application'])
 export class APIToolkitMiddleware {
@@ -101,10 +113,15 @@ export class APIToolkitMiddleware {
         { request, response }: HttpContextContract,
         next: () => Promise<void>
     ) {
+        const ctx = HttpContext.get();
+        const msg_id: string = uuidv4();
         const start_time = process.hrtime.bigint();
+        if (ctx) {
+            ctx.apitoolkitData = { client: this, msg_id, errors: [], config: this.#config, project_id: this.#project_id }
+        }
+
         let reqBody = this.getSafeBody(request.body());
         await next()
-        const msg_id: string = uuidv4();
         if (this.#config?.debug) {
             console.log('APIToolkit: adonisjs middleware called');
         }

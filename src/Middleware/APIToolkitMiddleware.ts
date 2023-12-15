@@ -134,7 +134,7 @@ export class APIToolkitMiddleware {
                 start_time,
                 reqBody,
                 respBody,
-                requestHeaders: request.headers,
+                requestHeaders: request.headers(),
                 responseHeaders: response.getHeaders(),
                 reqParams: request.params(),
                 status_code: response.response.statusCode,

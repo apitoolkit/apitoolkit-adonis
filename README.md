@@ -40,6 +40,7 @@ and export a `apitoolkitConfig` object with the following properties
 - *serviceVersion*: `optional` A string service version to help you monitor different versions of your deployments
 - *tags*: `optional` An array of tags to be associated with a request
 - *debug*: `optional` A boolean to enable debug mode (ie print debug information)
+- *disable*: `optional` A boolean to disable the sdk by setting it to `true`.
 
 
 ```js

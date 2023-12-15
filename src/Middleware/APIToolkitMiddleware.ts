@@ -110,10 +110,11 @@ export class APIToolkitMiddleware {
         return (resp.json()) as ClientMetadata;
     }
 
-    public async handle(
-        { request, response }: HttpContextContract,
-        next: () => Promise<void>
-    ) {
+    public async handle({ request, response }: HttpContextContract, next: () => Promise<void>) {
+        if (this.#config?.disable) {
+            await next();
+            return;
+        }
         const ctx = HttpContext.get();
         const msg_id: string = uuidv4();
         const start_time = process.hrtime.bigint();

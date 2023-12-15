@@ -5,4 +5,5 @@ import { APIToolkitConfig } from '@ioc:APIToolkit'
 export const apitoolkitConfig: APIToolkitConfig = {
     rootURL: "https://app.apitoolkit.io",
     debug: false,
+    disable: false
 }

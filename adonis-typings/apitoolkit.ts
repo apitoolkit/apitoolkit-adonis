@@ -19,6 +19,7 @@ declare module '@ioc:APIToolkit' {
     clientMetadata?: ClientMetadata;
     serviceVersion?: string;
     tags?: string[];
+    disable?: boolean;
 
   }
 

@@ -100,7 +100,6 @@ export const onResponseError =
                     "APIToolkit: Context not found, make sure to enable asyncLocalStorage in your project",
                 );
                 return Promise.reject(error);
-
             }
 
             const req = error.config;

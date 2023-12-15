@@ -40,6 +40,12 @@ export const onResponse =
                 );
                 return response;
             }
+            if (!ctx.apitoolkitData) {
+                console.log(
+                    "APIToolkit: data not found, make sure to set disable to false in apitoolkitConfig",
+                );
+                return response
+            }
             const req = response.config;
             const res = response;
 
@@ -98,6 +104,12 @@ export const onResponseError =
             if (!ctx) {
                 console.log(
                     "APIToolkit: Context not found, make sure to enable asyncLocalStorage in your project",
+                );
+                return Promise.reject(error);
+            }
+            if (!ctx.apitoolkitData) {
+                console.log(
+                    "APIToolkit: data not found, make sure to set disable to false in apitoolkitConfig",
                 );
                 return Promise.reject(error);
             }

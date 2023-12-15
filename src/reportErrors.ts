@@ -4,9 +4,15 @@ import { ATError } from "./payload";
 
 export function reportError(error: any) {
     const ctx = HttpContext.get();
-    if (ctx == null) {
+    if (!ctx) {
         console.log(
             "APIToolkit: Context not found, make sure to enable asyncLocalStorage in your project",
+        );
+        return Promise.reject(error);
+    }
+    if (!ctx.apitoolkitData) {
+        console.log(
+            "APIToolkit: data not found, make sure to set disable to false in apitoolkitConfig",
         );
         return Promise.reject(error);
     }
@@ -18,7 +24,7 @@ export function reportError(error: any) {
 
     const [nError, _internalFrames] = resp;
     const atError = buildError(nError);
-    const errList = ctx.apitoolkitData.errors
+    const errList = ctx.apitoolkitData?.errors || [];
     errList.push(atError);
     ctx.apitoolkitData.errors = errList
 }

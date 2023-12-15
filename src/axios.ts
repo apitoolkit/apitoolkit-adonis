@@ -43,8 +43,9 @@ export const onResponse =
             const req = response.config;
             const res = response;
 
-            const reqBody = JSON.stringify(req.data || {});
-            const respBody = JSON.stringify(res.data || {});
+            const reqBody = typeof req?.data === "string" ? req.data : JSON.stringify(req?.data || {});
+            const respBody = typeof req?.data === "string" ? res?.data as string : JSON.stringify(res?.data || {});
+
             const project_id = ctx.apitoolkitData.project_id
             const ATClient = ctx.apitoolkitData.client
             const ATConfig = ctx.apitoolkitData.config

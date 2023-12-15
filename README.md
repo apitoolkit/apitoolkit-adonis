@@ -72,7 +72,16 @@ The choice of JSONPath was selected to allow you have great flexibility in desci
 
 ## Using apitoolkit to observe an axios based outgoing request
 
-Simply wrap your axios instance with the APIToolkit observeAxios function.
+To monitor outgoing request, you need to first enable asyncLocalStorage in your adonisjs project.
+by setting `useAsyncLocalStorage` to true in your `config/app.ts` file.
+```ts
+export const http: ServerConfig = {
+  useAsyncLocalStorage: true
+  // other configs
+}
+```
+
+After setting `asyncLocalStorage` to true, simply wrap your axios instance with the APIToolkit observeAxios function.
 
 ```typescript
 import Route from '@ioc:Adonis/Core/Route'
@@ -134,7 +143,15 @@ For the other arguments, you can either skip them if at the end, or use undefine
 APIToolkit detects a lot of API issues automatically, but it's also valuable to report and track errors. This helps you associate more details about the backend with a given failing request.
 If you've used sentry, or rollback, or bugsnag, then you're likely aware of this functionality.
 
-Within the context of a web request, reporting error is as simple as calling the apitoolkit ReportError function.
+To report errors, you need to first enable asyncLocalStorage in your adonisjs project.
+by setting `useAsyncLocalStorage` to true in your `config/app.ts` file.
+```ts
+export const http: ServerConfig = {
+  useAsyncLocalStorage: true
+  // other configs
+}
+```
+You can then start reporting errors by calling the apitoolkit `reportError` function.
 
 ```typescript
 import Route from '@ioc:Adonis/Core/Route'

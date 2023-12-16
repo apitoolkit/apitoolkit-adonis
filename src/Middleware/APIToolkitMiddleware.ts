@@ -40,9 +40,10 @@ export class APIToolkitMiddleware {
         this.app.container.singleton("APIToolkit", () => {
             return this
         })
-        let config = this.app.container.resolveBinding('Adonis/Core/Config').merge('apitoolkit.apitoolkitConfig', defaultConfig) as APIToolkitConfig
+        const config = this.app.container.resolveBinding('Adonis/Core/Config').merge('apitoolkit.apitoolkitConfig', defaultConfig) as APIToolkitConfig
 
-        let { rootURL = 'https://app.apitoolkit.io', clientMetadata } = config;
+        const { rootURL = 'https://app.apitoolkit.io' } = config;
+        let clientMetadata = config.clientMetadata
 
 
         let pubsubClient: any;
@@ -122,12 +123,12 @@ export class APIToolkitMiddleware {
             ctx.apitoolkitData = { client: this, msg_id, errors: [], config: this.#config, project_id: this.#project_id }
         }
 
-        let reqBody = this.getSafeBody(request.body());
+        const reqBody = this.getSafeBody(request.body());
         await next()
         if (this.#config?.debug) {
             console.log('APIToolkit: adonisjs middleware called');
         }
-        let respBody = this.getSafeBody(response.getBody());
+        const respBody = this.getSafeBody(response.getBody());
         const errors = ctx?.apitoolkitData.errors || [];
         if (this.#project_id) {
             const payload = buildPayload({

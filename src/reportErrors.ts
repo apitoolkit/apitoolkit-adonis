@@ -22,7 +22,7 @@ export function reportError(error: any) {
         return;
     }
 
-    const [nError, _internalFrames] = resp;
+    const [nError] = resp;
     const atError = buildError(nError);
     const errList = ctx.apitoolkitData?.errors || [];
     errList.push(atError);

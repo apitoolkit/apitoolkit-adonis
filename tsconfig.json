@@ -2,9 +2,11 @@
   "extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
   "compilerOptions": {
     "skipLibCheck": true,
+    "strict": true,
     "experimentalDecorators": true,
     "types": [
-      "@adonisjs/core"
+      "@adonisjs/core",
+      "@japa/runner"
     ]
   }
 }

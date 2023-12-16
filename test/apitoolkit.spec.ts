@@ -1,12 +1,3 @@
-/*
- * @adonisjs/bodyparser
- *
- * (c) Harminder Virk <virk@adonisjs.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 /// <reference path="../adonis-typings/apitoolkit.ts" />
 /// <reference path="../adonis-typings/index.ts" />
 
@@ -36,11 +27,10 @@ test.group('APIToolkitMiddleware Test', (group) => {
     test('Post request body', async ({ assert }: any) => {
         let published = false
         const server = createServer(async (req, res) => {
-            const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
+            const ctx = app.container.use('Adonis/Core/HttpContext').create('/:slug/test', {}, req, res)
             app.container.use("Adonis/Core/BodyParser")
             const middleware = new APIToolkitMiddleware(app)
             middleware.publishMessage = (payload: Payload) => {
-                published = true
                 assert.equal(payload.status_code, 200)
                 assert.deepEqual(payload.response_headers, { "content-type": "application/json" })
                 assert.deepEqual(payload.response_body, { username: 'virk' })
@@ -88,102 +78,55 @@ test.group('APIToolkitMiddleware Test', (group) => {
 
     })
 
-    test('Post request body', async ({ assert }: any) => {
+    test("Should get data", async ({ assert }: any) => {
         let published = false
+
         const server = createServer(async (req, res) => {
-            const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
+            const ctx = app.container.use('Adonis/Core/HttpContext').create('/:slug/test', {}, req, res)
             app.container.use("Adonis/Core/BodyParser")
             const middleware = new APIToolkitMiddleware(app)
             middleware.publishMessage = (payload: Payload) => {
-                published = true
-                assert.equal(payload.status_code, 200)
-                assert.deepEqual(payload.response_headers, { "content-type": "application/json" })
-                assert.deepEqual(payload.response_body, { username: 'virk' })
-                assert.equal(payload.method, "POST");
+                assert.equal(payload.method, "GET");
                 assert.deepEqual(payload.path_params, { slug: "slug-value" });
+                assert.deepEqual(payload.query_params, {
+                    param1: ["abc"],
+                    param2: ["123"],
+                });
+                assert.equal(payload.status_code, 200);
                 assert.equal(payload.sdk_type, "JsAdonis");
-                assert.deepEqual(payload.request_headers, {
-                    "accept-encoding": ["gzip, deflate"],
-                    connection: ["close"],
-                    "content-length": ["437"],
-                    "content-type": ["application/json"],
-                    "x-api-key": ["past-3"],
-                });
-
-                assert.deepEqual(payload.response_headers, {
-                    "content-type": ["application/json; charset=utf-8"],
-                    "x-secret": ["[CLIENT_REDACTED]"],
-                    "x-api-key": ["applicationKey"],
-                });
-
                 assert.equal(payload.url_path, "/:slug/test");
-                assert.equal(payload.raw_url, "/slug-value/test");
+                assert.equal(payload.raw_url, "/slug-value/test?param1=abc&param2=123");
+                assert.isNotFalse(payload.duration > 500_000_000);
                 assert.equal(payload.response_body,
-                    Buffer.from(JSON.stringify(exampleDataRedacted)).toString("base64"));
-                assert.equal(payload.request_body, Buffer.from(JSON.stringify(exampleRequestData)).toString("base64"));
+                    Buffer.from(JSON.stringify(exampleRequestData)).toString("base64"),
+                );
                 published = true;
+
             }
 
             await middleware.handle(ctx, async () => {
-                res.writeHead(200, { 'content-type': 'application/json' })
                 res.setHeader("X-API-KEY", "applicationKey");
                 res.setHeader("X-SECRET", "secret value");
-                res.end(JSON.stringify(exampleResponseData))
+                setTimeout(() => {
+                    res.end(exampleRequestData);
+                }, 500);
             })
 
         })
+
         const response = await supertest(server)
-            .post("/slug-value/test")
+            .get("/slug-value/test?param1=abc&param2=123")
             .set("Content-Type", "application/json")
             .set("X-API-KEY", "past-3")
             .send(exampleRequestData);
-        assert.equal(response.status, 200);
-        assert.equal(response.body.status, "success");
-        assert.equal(published, true);
 
+        assert.equal(response.status, 200);
+        assert.equal(JSON.stringify(response.body),
+            JSON.stringify(exampleRequestData)
+        );
+        assert.equal(published, true);
     })
 
-
-    //     test('by pass when body is empty', async ({ assert }) => {
-    //         const server = createServer(async (req, res) => {
-    //             const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
-    //             const middleware = new BodyParserMiddleware(
-    //                 app.container.use('Adonis/Core/Config'),
-    //                 app.container.use('Adonis/Core/Drive')
-    //             )
-
-    //             await middleware.handle(ctx, async () => {
-    //                 res.writeHead(200, { 'content-type': 'application/json' })
-    //                 res.end(JSON.stringify(ctx.request.all()))
-    //             })
-    //         })
-
-    //         const { body } = await supertest(server).post('/').type('json')
-
-    //         assert.deepEqual(body, {})
-    //     })
-
-    //     test('by pass when content type is not supported', async ({ assert }) => {
-    //         const server = createServer(async (req, res) => {
-    //             const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
-    //             const middleware = new BodyParserMiddleware(
-    //                 app.container.use('Adonis/Core/Config'),
-    //                 app.container.use('Adonis/Core/Drive')
-    //             )
-
-    //             await middleware.handle(ctx, async () => {
-    //                 res.writeHead(200, { 'content-type': 'application/json' })
-    //                 res.end(JSON.stringify(ctx.request.all()))
-    //             })
-    //         })
-
-    //         const { body } = await supertest(server)
-    //             .post('/')
-    //             .set('content-type', 'my-type')
-    //             .send(JSON.stringify({ username: 'virk' }))
-
-    //         assert.deepEqual(body, {})
-    //     })
 })
 
 

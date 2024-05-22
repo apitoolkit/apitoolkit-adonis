@@ -1,8 +1,8 @@
 {
-  "name": "apitoolkit-adonis-v6",
+  "name": "apitoolkit-adonis-six",
   "version": "1.0.0",
   "description": "APIToolkit SDK for adonisjs",
-  "main": "build/providers/APIToolkitProvider.js",
+  "main": "build/providers/apitoolkit_provider.js",
   "type": "module",
   "scripts": {
     "pretest": "npm run lint",

@@ -1,7 +1,6 @@
 import { APIToolkitConfig, APIToolkitMiddleware } from '../src/Middleware/APIToolkitMiddleware.js'
 export { reportError } from '../src/reportErrors.js'
 export { observeAxios } from '../src/axios.js'
-// export default APIToolkitMiddleware
 import { configProvider } from '@adonisjs/core'
 import { RuntimeException } from '@poppinss/utils'
 import type { ApplicationService } from '@adonisjs/core/types'

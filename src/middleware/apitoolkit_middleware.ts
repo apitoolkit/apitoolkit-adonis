@@ -6,50 +6,9 @@ import fetch from 'sync-fetch'
 import { v4 as uuidv4 } from 'uuid'
 
 import { buildPayload } from 'apitoolkit-js'
-import { ATError, Payload } from '../payload.js'
+import { APIToolkitConfig, ClientMetadata, Payload } from '../types.js'
 import config from '@adonisjs/core/services/config'
 
-declare module '@adonisjs/core/http' {
-  interface HttpContext {
-    apitoolkitData: {
-      client: APIToolkitMiddleware
-      msg_id: string
-      errors: ATError[]
-      config: APIToolkitConfig
-      project_id: string
-    }
-  }
-}
-
-export type ClientMetadata = {
-  project_id: string
-  pubsub_project_id: string
-  topic_id: string
-  pubsub_push_service_account: any
-}
-
-export type APIToolkitConfig = {
-  apiKey: string
-  rootURL?: string
-  debug?: boolean
-  redactHeaders?: string[]
-  redactRequestBody?: string[]
-  redactResponseBody?: string[]
-  clientMetadata?: ClientMetadata
-  serviceVersion?: string
-  tags?: string[]
-  disable?: boolean
-}
-
-export interface APIToolkitMiddlewareInstance {
-  handle(ctx: HttpContext, next: NextFn): Promise<void>
-  close(): Promise<void>
-  publishMessage(payload: Payload): void
-}
-
-export interface APIToolkitMiddlewareContract {
-  new (config: APIToolkitConfig): APIToolkitMiddlewareInstance
-}
 const defaultConfig = {
   rootURL: 'https://app.apitoolkit.io',
   debug: false,

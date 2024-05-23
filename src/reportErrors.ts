@@ -1,5 +1,5 @@
 import { HttpContext } from '@adonisjs/core/http'
-import { ATError } from './payload.js'
+import { ATError } from './types.js'
 
 export function reportError(error: any) {
   const ctx = HttpContext.get()

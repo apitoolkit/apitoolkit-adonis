@@ -1,7 +1,7 @@
 import { HttpContext } from '@adonisjs/core/http'
 import { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { buildPayload } from 'apitoolkit-js'
-import { ATError } from './payload.js'
+import { ATError } from './types.js'
 
 declare module 'axios' {
   export interface InternalAxiosRequestConfig {

@@ -1,9 +1,10 @@
-import APIToolkitMiddleware, { APIToolkitConfig } from '../src/middleware/apitoolkit_middleware.js'
+import APIToolkitMiddleware from '../src/middleware/apitoolkit_middleware.js'
 export { reportError } from '../src/reportErrors.js'
 export { observeAxios } from '../src/axios.js'
 import { configProvider } from '@adonisjs/core'
 import { RuntimeException } from '@poppinss/utils'
 import type { ApplicationService } from '@adonisjs/core/types'
+import { APIToolkitConfig } from '../src/types.js'
 
 declare module '@adonisjs/core/types' {
   export interface ContainerBindings {

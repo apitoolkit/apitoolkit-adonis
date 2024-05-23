@@ -2,6 +2,6 @@ The apitoolkit package `apitoolkit-adonis` has been successfully configured. Bef
 
 ```ts
 Server.middleware.register([
-  () => import('apitoolkit-adonjis-v6/apitoolkit_provider'), // 👈
+  () => import('apitoolkit-adonjis-six/apitoolkit_provider'), // 👈
 ])
 ```

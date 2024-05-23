@@ -25,7 +25,7 @@ export default class APIToolkitProvider {
         )
       }
 
-      return new APIToolkitMiddleware(config)
+      return new APIToolkitMiddleware()
     })
   }
 }

@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { buildPayload } from 'apitoolkit-js'
 import { ATError, Payload } from '../payload.js'
+import config from '@adonisjs/core/services/config'
 
 declare module '@adonisjs/core/http' {
   interface HttpContext {
@@ -49,6 +50,11 @@ export interface APIToolkitMiddlewareInstance {
 export interface APIToolkitMiddlewareContract {
   new (config: APIToolkitConfig): APIToolkitMiddlewareInstance
 }
+const defaultConfig = {
+  rootURL: 'https://app.apitoolkit.io',
+  debug: false,
+}
+
 export default class APIToolkitMiddleware {
   #topicName: string
   #topic: Topic | undefined
@@ -56,13 +62,20 @@ export default class APIToolkitMiddleware {
   #project_id: string
   #config: APIToolkitConfig
   publishMessage: (payload: Payload) => void
-  constructor(config: APIToolkitConfig) {
-    const { rootURL = 'https://app.apitoolkit.io' } = config
-    let clientMetadata = config.clientMetadata
+  constructor() {
+    // this.app.container.singleton('APIToolkit', () => {
+    //   return this
+    // })
+    const configs = config.get('apitoolkit', defaultConfig) as APIToolkitConfig
+    // const configs = this.app.container
+    //   .resolveBinding('Adonis/Core/Config')
+    //   .merge('apitoolkit.apitoolkitConfig', defaultConfig) as APIToolkitConfig
 
+    const { rootURL = 'https://app.apitoolkit.io' } = configs
+    let clientMetadata = configs.clientMetadata
     let pubsubClient: any
-    if (!clientMetadata || config.apiKey != '') {
-      clientMetadata = this.getClientMetadata(rootURL, config.apiKey)
+    if (!clientMetadata || configs.apiKey != '') {
+      clientMetadata = this.getClientMetadata(rootURL, configs.apiKey)
       pubsubClient = new PubSub({
         projectId: clientMetadata.pubsub_project_id,
         authClient: new PubSub().auth.fromJSON(clientMetadata.pubsub_push_service_account),
@@ -70,7 +83,7 @@ export default class APIToolkitMiddleware {
     }
 
     const { topic_id, project_id } = clientMetadata
-    if (config.debug) {
+    if (configs.debug) {
       console.log('apitoolkit:  initialized successfully')
       console.dir(pubsubClient)
     }
@@ -78,7 +91,7 @@ export default class APIToolkitMiddleware {
     this.#topicName = topic_id
     this.#pubsub = pubsubClient
     this.#project_id = project_id
-    this.#config = config
+    this.#config = configs
     if (this.#pubsub && this.#topicName) {
       this.#topic = this.#pubsub?.topic(this.#topicName)
     }

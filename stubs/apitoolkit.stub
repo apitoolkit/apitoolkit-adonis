@@ -2,7 +2,7 @@
   exports({ to: app.configPath('apitoolkit.ts') })
 }}}
 
-import { defineConfig } from 'apitoolkit-adonis-six'
+import { defineConfig } from 'apitoolkit-adonis'
 
 export default defineConfig({
     apiKey: "",

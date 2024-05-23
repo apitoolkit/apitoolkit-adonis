@@ -49,7 +49,7 @@ export interface APIToolkitMiddlewareInstance {
 export interface APIToolkitMiddlewareContract {
   new (config: APIToolkitConfig): APIToolkitMiddlewareInstance
 }
-export class APIToolkitMiddleware {
+export default class APIToolkitMiddleware {
   #topicName: string
   #topic: Topic | undefined
   #pubsub: PubSub | undefined

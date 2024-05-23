@@ -3,6 +3,11 @@
   "version": "1.0.1",
   "description": "APIToolkit SDK for adonisjs",
   "type": "module",
+  "exports": {
+    ".": "./build/index.js",
+    "./types": "./build/src/types.js",
+    "./apitoolkit_provider": "./build/providers/apitoolkit_provider.js"
+  },
   "scripts": {
     "pretest": "npm run lint",
     "lint": "eslint . --ext=.ts",

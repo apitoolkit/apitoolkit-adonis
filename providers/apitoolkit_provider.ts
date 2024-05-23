@@ -1,4 +1,4 @@
-import { APIToolkitConfig, APIToolkitMiddleware } from '../src/middleware/apitoolkit_middleware.js'
+import APIToolkitMiddleware, { APIToolkitConfig } from '../src/middleware/apitoolkit_middleware.js'
 export { reportError } from '../src/reportErrors.js'
 export { observeAxios } from '../src/axios.js'
 import { configProvider } from '@adonisjs/core'

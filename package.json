@@ -1,8 +1,7 @@
 {
   "name": "apitoolkit-adonis-six",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "APIToolkit SDK for adonisjs",
-  "main": "build/providers/apitoolkit_provider.js",
   "type": "module",
   "scripts": {
     "pretest": "npm run lint",
@@ -10,7 +9,7 @@
     "test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
     "clean": "del-cli build",
     "compile": "npm run clean && tsc && npm run copy:files",
-    "copy:files": "copyfiles \"stubs/**/*.stub\" build && npm run copy:instructions_md",
+    "copy:files": "copyfiles \"stubs/**/*.stub\" build",
     "copy:instructions_md": "copyfiles \"instructions.md\" build",
     "build": "npm run compile",
     "prepublishOnly": "npm run build"
@@ -50,11 +49,11 @@
     "typescript": "^5.3.3"
   },
   "files": [
-    "build/adonis-typings",
     "build/providers",
     "build/src",
-    "build/templates",
-    "build/instructions.md"
+    "build/stubs",
+    "build/index.d.ts",
+    "build/index.js"
   ],
   "dependencies": {
     "@google-cloud/pubsub": "^4.0.7",

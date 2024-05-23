@@ -22,15 +22,7 @@ export default class APIToolkitMiddleware {
   #config: APIToolkitConfig
   publishMessage: (payload: Payload) => void
   constructor() {
-    // this.app.container.singleton('APIToolkit', () => {
-    //   return this
-    // })
     const configs = config.get('apitoolkit', defaultConfig) as APIToolkitConfig
-    console.log(configs)
-    // const configs = this.app.container
-    //   .resolveBinding('Adonis/Core/Config')
-    //   .merge('apitoolkit.apitoolkitConfig', defaultConfig) as APIToolkitConfig
-
     const { rootURL = 'https://app.apitoolkit.io' } = configs
     let clientMetadata = configs.clientMetadata
     let pubsubClient: any

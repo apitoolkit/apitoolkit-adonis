@@ -6,7 +6,8 @@
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
-    "./apitoolkit_provider": "./build/providers/apitoolkit_provider.js"
+    "./apitoolkit_provider": "./build/providers/apitoolkit_provider.js",
+    "./apitoolkit_middleware": "./build/src/middleware/apitoolkit_middleware.js"
   },
   "scripts": {
     "pretest": "npm run lint",

@@ -67,6 +67,7 @@ export default class APIToolkitMiddleware {
     //   return this
     // })
     const configs = config.get('apitoolkit', defaultConfig) as APIToolkitConfig
+    console.log(configs)
     // const configs = this.app.container
     //   .resolveBinding('Adonis/Core/Config')
     //   .merge('apitoolkit.apitoolkitConfig', defaultConfig) as APIToolkitConfig

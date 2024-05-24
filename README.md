@@ -10,22 +10,41 @@ The Adonisjs SDK integration guide for APIToolkit. It monitors incoming traffic,
 
 Run the following command to install the package from your projects root:
 
-```sh
-npm install apitoolkit-adonis
+#### For adonis v5
 
+```sh
+npm install apitoolkit-adonis@v2.2.0
+```
+
+#### For adonis v6
+
+```sh
+npm install apitoolkit-adonis@latest
+```
+
+```sh
 # configure apitoolkit for your adonis project
 node ace configure apitoolkit-adonis
 ```
 
 Edit `start/kernel.ts` to add `@ioc:APIToolkit` to your global middlewares list
 
+#### For adonis v5
+
 ```js
-
 Server.middleware.register([
-    () => import('@ioc:Adonis/Core/BodyParser'),
-    () => import("@ioc:APIToolkit")
+  () => import('@ioc:Adonis/Core/BodyParser'),
+  () => import('@ioc:APIToolkit'),
 ])
+```
 
+#### For adonis v6
+
+```js
+server.use([
+  () => import('#middleware/force_json_response_middleware'),
+  () => import('apitoolkit-adonis'),
+])
 ```
 
 ### Configuration
@@ -33,23 +52,35 @@ Server.middleware.register([
 To configure the sdk first create an `apitoolkit.ts` file in the `/config` directory
 and export a `apitoolkitConfig` object with the following properties
 
-- *apiKey*: `required` This API key can be generated from your [APIToolkit acount](https://app.apitoolkit.io)
-- *redactHeaders*: `optional` This is an array of request and response headers that should be omited by APIToolkit
-- *redactRequestBody*: `optional` An array of request body keypaths to be redacted (i.e should not leave your servers)
-- *redactResponseBody*: `optional` An array of reponse body keypaths to be redacted
-- *serviceVersion*: `optional` A string service version to help you monitor different versions of your deployments
-- *tags*: `optional` An array of tags to be associated with a request
-- *debug*: `optional` A boolean to enable debug mode (ie print debug information)
-- *disable*: `optional` A boolean to disable the sdk by setting it to `true`.
+- _apiKey_: `required` This API key can be generated from your [APIToolkit acount](https://app.apitoolkit.io)
+- _redactHeaders_: `optional` This is an array of request and response headers that should be omited by APIToolkit
+- _redactRequestBody_: `optional` An array of request body keypaths to be redacted (i.e should not leave your servers)
+- _redactResponseBody_: `optional` An array of reponse body keypaths to be redacted
+- _serviceVersion_: `optional` A string service version to help you monitor different versions of your deployments
+- _tags_: `optional` An array of tags to be associated with a request
+- _debug_: `optional` A boolean to enable debug mode (ie print debug information)
+- _disable_: `optional` A boolean to disable the sdk by setting it to `true`.
 
+#### For adonis v5
 
 ```js
 export const apitoolkitConfig = {
-    apiKey: "<YOUR_API_KEY>",
+  apiKey: '<YOUR_API_KEY>',
 }
 ```
-After configuring the sdk, all incoming request will now be send to APIToolkit.
 
+#### For adonis v6
+
+```js
+import { defineConfig } from 'apitoolkit-adonis'
+
+export default defineConfig({
+  apiKey: '<YOUR_API_KEY>',
+  debug: false,
+})
+```
+
+After configuring the sdk, all incoming request will now be send to APIToolkit.
 
 ### Redacting Senstive Fields and Headers
 
@@ -59,10 +90,10 @@ To mark fields that should be redacted, simply add them to the `conf/apitoolkit.
 
 ```js
 export const apitoolkitConfig = {
-    apiKey: "<YOUR_API_KEY>",
-    redactHeaders: ["Content-Type", "Authorization", "Cookies"], // Specified headers will be redacted
-    redactRequestBody: ["$.credit-card.cvv", "$.credit-card.name"], // Specified request bodies fields will be redacted
-    redactResponseBody: ["$.message.error"], // Specified response body fields will be redacted
+  apiKey: '<YOUR_API_KEY>',
+  redactHeaders: ['Content-Type', 'Authorization', 'Cookies'], // Specified headers will be redacted
+  redactRequestBody: ['$.credit-card.cvv', '$.credit-card.name'], // Specified request bodies fields will be redacted
+  redactResponseBody: ['$.message.error'], // Specified response body fields will be redacted
 }
 ```
 
@@ -70,14 +101,14 @@ It is important to note that while the `redactHeaders` config field accepts a li
 
 The choice of JSONPath was selected to allow you have great flexibility in descibing which fields within your responses are sensitive. Also note that these list of items to be redacted will be aplied to all endpoint requests and responses on your server. To learn more about jsonpath to help form your queries, please take a look at this cheatsheet: https://lzone.de/cheat-sheet/JSONPath
 
-
 ## Using apitoolkit to observe an axios based outgoing request
 
 To monitor outgoing request, you need to first enable asyncLocalStorage in your adonisjs project.
 by setting `useAsyncLocalStorage` to true in your `config/app.ts` file.
+
 ```ts
 export const http: ServerConfig = {
-  useAsyncLocalStorage: true
+  useAsyncLocalStorage: true,
   // other configs
 }
 ```
@@ -116,23 +147,23 @@ There are other optional arguments you could pass on to the observeAxios functio
 
 ```typescript
 import Route from '@ioc:Adonis/Core/Route'
-import axios from "axios"
-import { observeAxios } from "apitoolkit-adonis";
+import axios from 'axios'
+import { observeAxios } from 'apitoolkit-adonis'
 
-const redactHeadersList = ["Content-Type", "Authorization"];
-const redactRequestBodyList = ["$.body.user.password"];
-const redactResponseBodyList = undefined;
+const redactHeadersList = ['Content-Type', 'Authorization']
+const redactRequestBodyList = ['$.body.user.password']
+const redactResponseBodyList = undefined
 
 Route.get('/observer', async () => {
-    const response = await observeAxios(
-      axios,
-      "/users/{user_id}",
-      redactHeadersList,
-      redactRequestBodyList,
-      redactResponseBodyList,
-    ).get(`${baseURL}/users/user1234`);
-    
-    return {hello: "world"}
+  const response = await observeAxios(
+    axios,
+    '/users/{user_id}',
+    redactHeadersList,
+    redactRequestBodyList,
+    redactResponseBodyList
+  ).get(`${baseURL}/users/user1234`)
+
+  return { hello: 'world' }
 })
 ```
 
@@ -146,21 +177,23 @@ If you've used sentry, or rollback, or bugsnag, then you're likely aware of this
 
 To report errors, you need to first enable asyncLocalStorage in your adonisjs project.
 by setting `useAsyncLocalStorage` to true in your `config/app.ts` file.
+
 ```ts
 export const http: ServerConfig = {
-  useAsyncLocalStorage: true
+  useAsyncLocalStorage: true,
   // other configs
 }
 ```
+
 You can then start reporting errors by calling the apitoolkit `reportError` function.
 
 ```typescript
 import Route from '@ioc:Adonis/Core/Route'
-import { reportError } from "apitoolkit-adonis";
+import { reportError } from 'apitoolkit-adonis'
 
 Route.get('/observer', async () => {
   try {
-    throw ("Error occured")
+    throw 'Error occured'
   } catch (error) {
     reportError(error)
   }

@@ -27,7 +27,7 @@ APItoolkit is an end-to-end API and web services management toolkit for engineer
 
 To install the SDK, kindly run the command below to install the SDK:
 
-```js
+```sh
 npm install apitoolkit-adonis@latest
 ```
 

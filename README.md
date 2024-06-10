@@ -6,7 +6,7 @@
 ## AdonisJS SDK
 
 [![APItoolkit SDK](https://img.shields.io/badge/APItoolkit-SDK-0068ff?logo=adonisjs)](https://github.com/topics/apitoolkit-sdk) [![](https://img.shields.io/npm/v/apitoolkit-adonis.svg?logo=npm)](https://npmjs.com/package/apitoolkit-adonis) [![](https://img.shields.io/npm/dw/apitoolkit-adonis
-)](https://npmjs.com/package/apitoolkit-adonis) [![Join Discord Server](https://img.shields.io/badge/Chat-Discord-7289da)](https://discord.gg/dEB6EjQnKB) [![APItoolkit Docs](https://img.shields.io/badge/Read-Docs-0068ff)](https://apitoolkit.io/docs/sdks/nodejs/adonisjs?utm_source=github-sdk) 
+)](https://npmjs.com/package/apitoolkit-adonis) [![Join Discord Server](https://img.shields.io/badge/Chat-Discord-7289da)](https://discord.gg/dEB6EjQnKB) [![APItoolkit Docs](https://img.shields.io/badge/Read-Docs-0068ff)](https://apitoolkit.io/docs/sdks/nodejs/adonisjs?utm_source=github-sdks) 
 
 APItoolkit is an end-to-end API and web services management toolkit for engineers and customer support teams. To integrate your AdonisJS application with APItoolkit, you need to use this SDK to monitor incoming traffic, aggregate the requests, and then deliver them to the APItoolkit's servers.
 
@@ -25,7 +25,7 @@ APItoolkit is an end-to-end API and web services management toolkit for engineer
 
 ## Installation
 
-To install the SDK, kindly run the command below to install the SDK:
+Kindly run the command below to install the SDK:
 
 ```sh
 npm install apitoolkit-adonis@latest
@@ -35,7 +35,7 @@ npm install apitoolkit-adonis@latest
 
 Next, run the command below to configure the SDK using ace:
 
-```js
+```sh
 node ace configure apitoolkit-adonis
 ```
 
@@ -60,13 +60,13 @@ export default defineConfig({
 
 > [!NOTE]
 > 
-> The `{ENTER_YOUR_API_KEY_HERE}` demo string should be replaced with the [API key](https://apitoolkit.io/docs/dashboard/settings-pages/api-keys?utm_source=github-sdk) generated from the APItoolkit dashboard.
+> The `{ENTER_YOUR_API_KEY_HERE}` demo string should be replaced with the [API key](https://apitoolkit.io/docs/dashboard/settings-pages/api-keys?utm_source=github-sdks) generated from the APItoolkit dashboard.
 
 <br />
 
 > [!IMPORTANT]
 > 
-> To learn more configuration options (redacting fields, error reporting, outgoing requests, etc.), please read this [SDK documentation](https://apitoolkit.io/docs/sdks/nodejs/adonisjs?utm_source=github-sdk).
+> To learn more configuration options (redacting fields, error reporting, outgoing requests, etc.), please read this [SDK documentation](https://apitoolkit.io/docs/sdks/nodejs/adonisjs?utm_source=github-sdks).
 
 ## Contributing and Help
 
@@ -83,6 +83,6 @@ This repository is published under the [MIT](LICENSE) license.
 
 <div align="center">
     
-<a href="https://apitoolkit.io?utm_source=apitoolkit_github_dotnetsdk" target="_blank" rel="noopener noreferrer"><img src="https://github.com/apitoolkit/.github/blob/main/images/icon.png?raw=true" width="40" /></a>
+<a href="https://apitoolkit.io?utm_source=github-sdks" target="_blank" rel="noopener noreferrer"><img src="https://github.com/apitoolkit/.github/blob/main/images/icon.png?raw=true" width="40" /></a>
 
 </div>

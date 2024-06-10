@@ -1,202 +1,88 @@
-<p>
-<img src="https://apitoolkit.io/assets/img/logo-full.svg" alt="APIToolkit" width="250px" />
-</p>
+<div align="center">
 
-# APIToolkit Adonisjs integration.
+![APItoolkit's Logo](https://github.com/apitoolkit/.github/blob/main/images/logo-white.svg?raw=true#gh-dark-mode-only)
+![APItoolkit's Logo](https://github.com/apitoolkit/.github/blob/main/images/logo-black.svg?raw=true#gh-light-mode-only)
 
-The Adonisjs SDK integration guide for APIToolkit. It monitors incoming traffic, gathers the requests, and sends the request to the API toolkit servers.
+## AdonisJS SDK
+
+[![APItoolkit SDK](https://img.shields.io/badge/APItoolkit-SDK-0068ff?logo=adonisjs)](https://github.com/topics/apitoolkit-sdk) [![](https://img.shields.io/npm/v/apitoolkit-adonis.svg?logo=npm)](https://npmjs.com/package/apitoolkit-adonis) [![](https://img.shields.io/npm/dw/apitoolkit-adonis
+)](https://npmjs.com/package/apitoolkit-adonis) [![Join Discord Server](https://img.shields.io/badge/Chat-Discord-7289da)](https://discord.gg/dEB6EjQnKB) [![APItoolkit Docs](https://img.shields.io/badge/Read-Docs-0068ff)](https://apitoolkit.io/docs/sdks/nodejs/adonisjs?utm_source=github-sdk) 
+
+APItoolkit is an end-to-end API and web services management toolkit for engineers and customer support teams. To integrate your AdonisJS application with APItoolkit, you need to use this SDK to monitor incoming traffic, aggregate the requests, and then deliver them to the APItoolkit's servers.
+
+</div>
+
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Contributing and Help](#contributing-and-help)
+- [License](#license)
+
+---
 
 ## Installation
 
-Run the following command to install the package from your projects root:
+To install the SDK, kindly run the command below to install the SDK:
 
-#### For adonis v5
-
-```sh
-npm install apitoolkit-adonis@v2.2.0
-```
-
-#### For adonis v6
-
-```sh
+```js
 npm install apitoolkit-adonis@latest
 ```
 
-```sh
-# configure apitoolkit for your adonis project
+## Configuration
+
+Next, run the command below to configure the SDK using ace:
+
+```js
 node ace configure apitoolkit-adonis
 ```
 
-Edit `start/kernel.ts` to add `@ioc:APIToolkit` to your global middlewares list
-
-#### For adonis v5
-
-```js
-Server.middleware.register([
-  () => import('@ioc:Adonis/Core/BodyParser'),
-  () => import('@ioc:APIToolkit'),
-])
-```
-
-#### For adonis v6
+Then, register the middleware by adding `apitoolkit-adonis` to your global middleware list in the `start/kernel.js|ts` file like so:
 
 ```js
 server.use([
-  () => import('#middleware/force_json_response_middleware'),
   () => import('apitoolkit-adonis'),
 ])
 ```
 
-### Configuration
-
-To configure the sdk first create an `apitoolkit.ts` file in the `/config` directory
-and export a `apitoolkitConfig` object with the following properties
-
-- _apiKey_: `required` This API key can be generated from your [APIToolkit acount](https://app.apitoolkit.io)
-- _redactHeaders_: `optional` This is an array of request and response headers that should be omited by APIToolkit
-- _redactRequestBody_: `optional` An array of request body keypaths to be redacted (i.e should not leave your servers)
-- _redactResponseBody_: `optional` An array of reponse body keypaths to be redacted
-- _serviceVersion_: `optional` A string service version to help you monitor different versions of your deployments
-- _tags_: `optional` An array of tags to be associated with a request
-- _debug_: `optional` A boolean to enable debug mode (ie print debug information)
-- _disable_: `optional` A boolean to disable the sdk by setting it to `true`.
-
-#### For adonis v5
-
-```js
-export const apitoolkitConfig = {
-  apiKey: '<YOUR_API_KEY>',
-}
-```
-
-#### For adonis v6
+Then, create an `apitoolkit.js|ts` file in the `/conf` directory and export the `defineConfig` object with some properties like so:
 
 ```js
 import { defineConfig } from 'apitoolkit-adonis'
 
 export default defineConfig({
-  apiKey: '<YOUR_API_KEY>',
-  debug: false,
+  apiKey: "{ENTER_YOUR_API_KEY_HERE}",
+  debug: false // Set to true to enable debug mode
 })
 ```
 
-After configuring the sdk, all incoming request will now be send to APIToolkit.
+> [!NOTE]
+> 
+> The `{ENTER_YOUR_API_KEY_HERE}` demo string should be replaced with the [API key](https://apitoolkit.io/docs/dashboard/settings-pages/api-keys?utm_source=github-sdk) generated from the APItoolkit dashboard.
 
-### Redacting Senstive Fields and Headers
+<br />
 
-While it's possible to mark a field as redacted from the apitoolkit dashboard, this client also supports redacting at the client side. Client side redacting means that those fields would never leave your servers at all. So you feel safer that your sensitive data only stays on your servers.
+> [!IMPORTANT]
+> 
+> To learn more configuration options (redacting fields, error reporting, outgoing requests, etc.), please read this [SDK documentation](https://apitoolkit.io/docs/sdks/nodejs/adonisjs?utm_source=github-sdk).
 
-To mark fields that should be redacted, simply add them to the `conf/apitoolkit.ts` default export object. Eg:
+## Contributing and Help
 
-```js
-export const apitoolkitConfig = {
-  apiKey: '<YOUR_API_KEY>',
-  redactHeaders: ['Content-Type', 'Authorization', 'Cookies'], // Specified headers will be redacted
-  redactRequestBody: ['$.credit-card.cvv', '$.credit-card.name'], // Specified request bodies fields will be redacted
-  redactResponseBody: ['$.message.error'], // Specified response body fields will be redacted
-}
-```
+To contribute to the development of this SDK or request help from the community and our team, kindly do any of the following:
+- Read our [Contributors Guide](https://github.com/apitoolkit/.github/blob/main/CONTRIBUTING.md).
+- Join our community [Discord Server](https://discord.gg/dEB6EjQnKB).
+- Create a [new issue](https://github.com/apitoolkit/apitoolkit-dotnet/issues/new/choose) in this repository.
 
-It is important to note that while the `redactHeaders` config field accepts a list of headers(case insensitive), the `redactRequestBody` and `redactResponseBody` expect a list of JSONPath strings as arguments.
+## License
 
-The choice of JSONPath was selected to allow you have great flexibility in descibing which fields within your responses are sensitive. Also note that these list of items to be redacted will be aplied to all endpoint requests and responses on your server. To learn more about jsonpath to help form your queries, please take a look at this cheatsheet: https://lzone.de/cheat-sheet/JSONPath
+This repository is published under the [MIT](LICENSE) license.
 
-## Using apitoolkit to observe an axios based outgoing request
+---
 
-To monitor outgoing request, you need to first enable asyncLocalStorage in your adonisjs project.
-by setting `useAsyncLocalStorage` to true in your `config/app.ts` file.
+<div align="center">
+    
+<a href="https://apitoolkit.io?utm_source=apitoolkit_github_dotnetsdk" target="_blank" rel="noopener noreferrer"><img src="https://github.com/apitoolkit/.github/blob/main/images/icon.png?raw=true" width="40" /></a>
 
-```ts
-export const http: ServerConfig = {
-  useAsyncLocalStorage: true,
-  // other configs
-}
-```
-
-After setting `asyncLocalStorage` to true, simply wrap your axios instance with the APIToolkit observeAxios function.
-
-```typescript
-import Route from '@ioc:Adonis/Core/Route'
-import { observeAxios } from "apitoolkit-adonis"
-import axios from "axios"
-
-
-Route.get('/observer', async () => {
-    const response = await observeAxios(axios).get(`${baseURL}/user_list/active`);
-    return response.data;
-}
-```
-
-If you're making requests to endpoints which have variable urlPaths, you should include a wildcard url of the path, so that apitoolkit groups the endpoints correctly for you on the dashboard:
-
-```typescript
-import Route from '@ioc:Adonis/Core/Route'
-import { observeAxios } from "apitoolkit-adonis";
-import axios from "axios"
-
-Route.get('/observer', async () => {
-    const response = await observeAxios(axios, "/users/{user_id}").get(
-      `${baseURL}/users/user1234`,
-    );
-    return response.data;
-}
-
-```
-
-There are other optional arguments you could pass on to the observeAxios function, eg:
-
-```typescript
-import Route from '@ioc:Adonis/Core/Route'
-import axios from 'axios'
-import { observeAxios } from 'apitoolkit-adonis'
-
-const redactHeadersList = ['Content-Type', 'Authorization']
-const redactRequestBodyList = ['$.body.user.password']
-const redactResponseBodyList = undefined
-
-Route.get('/observer', async () => {
-  const response = await observeAxios(
-    axios,
-    '/users/{user_id}',
-    redactHeadersList,
-    redactRequestBodyList,
-    redactResponseBodyList
-  ).get(`${baseURL}/users/user1234`)
-
-  return { hello: 'world' }
-})
-```
-
-Note that you can ignore any of these arguments except the first argument which is the axios instance to observe.
-For the other arguments, you can either skip them if at the end, or use undefined as a placeholder.
-
-## Reporting errors to APIToolkit
-
-APIToolkit detects a lot of API issues automatically, but it's also valuable to report and track errors. This helps you associate more details about the backend with a given failing request.
-If you've used sentry, or rollback, or bugsnag, then you're likely aware of this functionality.
-
-To report errors, you need to first enable asyncLocalStorage in your adonisjs project.
-by setting `useAsyncLocalStorage` to true in your `config/app.ts` file.
-
-```ts
-export const http: ServerConfig = {
-  useAsyncLocalStorage: true,
-  // other configs
-}
-```
-
-You can then start reporting errors by calling the apitoolkit `reportError` function.
-
-```typescript
-import Route from '@ioc:Adonis/Core/Route'
-import { reportError } from 'apitoolkit-adonis'
-
-Route.get('/observer', async () => {
-  try {
-    throw 'Error occured'
-  } catch (error) {
-    reportError(error)
-  }
-  return { hello: 'world' }
-})
-```
+</div>

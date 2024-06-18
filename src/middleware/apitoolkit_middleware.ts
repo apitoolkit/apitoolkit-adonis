@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { buildPayload } from 'apitoolkit-js'
 import { APIToolkitConfig, ClientMetadata, Payload } from '../types.js'
 import config from '@adonisjs/core/services/config'
+import { observeAxiosGlobal, observeAxiosNotWebContext } from '../axios.js'
+import { AxiosStatic } from 'axios'
 
 const defaultConfig = {
   rootURL: 'https://app.apitoolkit.io',
@@ -38,6 +40,15 @@ export default class APIToolkitMiddleware {
     if (configs.debug) {
       console.log('apitoolkit:  initialized successfully')
       console.dir(pubsubClient)
+    }
+    if (configs.monitorAxios) {
+      observeAxiosGlobal(
+        configs.monitorAxios,
+        configs.redactHeaders,
+        configs.redactRequestBody,
+        configs.redactResponseBody,
+        this
+      )
     }
 
     this.#topicName = topic_id
@@ -78,6 +89,25 @@ export default class APIToolkitMiddleware {
     await this.#pubsub?.close()
   }
 
+  public getConfig() {
+    return { project_id: this.#project_id, config: this.#config }
+  }
+  public observeAxios(
+    axios: AxiosStatic,
+    urlWildcard: string | undefined,
+    redactHeaders: string[],
+    redactRequestBody: string[],
+    redactResponseBody: string[]
+  ) {
+    return observeAxiosNotWebContext(
+      axios,
+      urlWildcard,
+      redactHeaders,
+      redactRequestBody,
+      redactResponseBody,
+      this
+    )
+  }
   getClientMetadata(rootURL: string, apiKey: string) {
     const resp = fetch(rootURL + '/api/client_metadata', {
       method: 'GET',
@@ -107,7 +137,6 @@ export default class APIToolkitMiddleware {
         project_id: this.#project_id,
       }
     }
-
     const reqBody = this.getSafeBody(request.body())
     await next()
     if (this.#config?.debug) {

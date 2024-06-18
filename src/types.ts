@@ -1,6 +1,7 @@
 import { NextFn } from '@adonisjs/core/types/http'
 import APIToolkitMiddleware from './middleware/apitoolkit_middleware.js'
 import { HttpContext } from '@adonisjs/core/http'
+import { AxiosInstance } from 'axios'
 
 declare module '@adonisjs/core/http' {
   interface HttpContext {
@@ -70,6 +71,7 @@ export type APIToolkitConfig = {
   serviceVersion?: string
   tags?: string[]
   disable?: boolean
+  monitorAxios?: AxiosInstance
 }
 
 export interface APIToolkitMiddlewareInstance {

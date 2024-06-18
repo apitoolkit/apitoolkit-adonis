@@ -280,7 +280,6 @@ export function observeAxiosNotWebContext(
 }
 export function observeAxiosGlobal(
   axiosInstance: AxiosInstance,
-  urlWildcard: string | undefined = undefined,
   redactHeaders: string[] = [],
   redactRequestBody: string[] = [],
   redactResponseBody: string[] = [],
@@ -289,7 +288,7 @@ export function observeAxiosGlobal(
   axiosInstance.interceptors.request.use(onRequest, onRequestError)
   axiosInstance.interceptors.response.use(
     onResponse(
-      urlWildcard,
+      undefined,
       redactHeaders,
       redactRequestBody,
       redactResponseBody,
@@ -298,7 +297,7 @@ export function observeAxiosGlobal(
       client
     ),
     onResponseError(
-      urlWildcard,
+      undefined,
       redactHeaders,
       redactRequestBody,
       redactResponseBody,

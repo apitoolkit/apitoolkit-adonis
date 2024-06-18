@@ -120,75 +120,88 @@ export default class APIToolkitMiddleware {
     return resp.json() as ClientMetadata
   }
 
-  public async handle({ request, response }: HttpContext, next: NextFn) {
-    if (this.#config?.disable) {
-      await next()
-      return
-    }
-    const ctx = HttpContext.get()
-    const msg_id: string = uuidv4()
-    const start_time = process.hrtime.bigint()
-    if (ctx) {
-      ctx.apitoolkitData = {
-        client: this,
-        msg_id,
-        errors: [],
-        config: this.#config,
-        project_id: this.#project_id,
+  public middleware() {
+    const project_id = this.#project_id
+    const config = this.#config
+    const client = this
+    class middleware {
+      #project_id: string
+      #config: APIToolkitConfig
+      constructor() {
+        this.#project_id = project_id
+        this.#config = config
       }
-    }
-    const reqBody = this.getSafeBody(request.body())
-    await next()
-    if (this.#config?.debug) {
-      console.log('APIToolkit: adonisjs middleware called')
-    }
-    const respBody = this.getSafeBody(response.getBody())
-    const errors = ctx?.apitoolkitData.errors || []
-    if (this.#project_id) {
-      const payload = buildPayload({
-        start_time,
-        reqBody,
-        respBody,
-        requestHeaders: request.headers(),
-        responseHeaders: response.getHeaders(),
-        reqParams: request.params(),
-        status_code: response.response.statusCode,
-        raw_url: request.url(true),
-        url_path: request.ctx?.route?.pattern || '',
-        reqQuery: request.qs(),
-        method: request.method(),
-        host: request.hostname() || '',
-        redactHeaderLists: this.#config?.redactHeaders ?? [],
-        redactRequestBody: this.#config?.redactRequestBody ?? [],
-        redactResponseBody: this.#config?.redactResponseBody ?? [],
-        errors,
-        sdk_type: 'JsAdonis',
-        service_version: this.#config?.serviceVersion,
-        tags: this.#config?.tags ?? [],
-        msg_id,
-        parent_id: undefined,
-        project_id: this.#project_id,
-      })
+      public async handle({ request, response }: HttpContext, next: NextFn) {
+        if (this.#config?.disable) {
+          await next()
+          return
+        }
+        const ctx = HttpContext.get()
+        const msg_id: string = uuidv4()
+        const start_time = process.hrtime.bigint()
+        if (ctx) {
+          ctx.apitoolkitData = {
+            client,
+            msg_id,
+            errors: [],
+            config: this.#config,
+            project_id: this.#project_id,
+          }
+        }
+        const reqBody = this.getSafeBody(request.body())
+        await next()
+        if (this.#config?.debug) {
+          console.log('APIToolkit: adonisjs middleware called')
+        }
+        const respBody = this.getSafeBody(response.getBody())
+        const errors = ctx?.apitoolkitData.errors || []
+        if (this.#project_id) {
+          const payload = buildPayload({
+            start_time,
+            reqBody,
+            respBody,
+            requestHeaders: request.headers(),
+            responseHeaders: response.getHeaders(),
+            reqParams: request.params(),
+            status_code: response.response.statusCode,
+            raw_url: request.url(true),
+            url_path: request.ctx?.route?.pattern || '',
+            reqQuery: request.qs(),
+            method: request.method(),
+            host: request.hostname() || '',
+            redactHeaderLists: this.#config?.redactHeaders ?? [],
+            redactRequestBody: this.#config?.redactRequestBody ?? [],
+            redactResponseBody: this.#config?.redactResponseBody ?? [],
+            errors,
+            sdk_type: 'JsAdonis',
+            service_version: this.#config?.serviceVersion,
+            tags: this.#config?.tags ?? [],
+            msg_id,
+            parent_id: undefined,
+            project_id: this.#project_id,
+          })
 
-      if (this.#config?.debug) {
-        console.log('APIToolkit: publish prepared payload ')
-        console.dir(payload)
+          if (this.#config?.debug) {
+            console.log('APIToolkit: publish prepared payload ')
+            console.dir(payload)
+          }
+          client.publishMessage(payload)
+        }
       }
-      this.publishMessage(payload)
-    }
-  }
-
-  getSafeBody(rqb: any): string {
-    let result = ''
-    if (typeof rqb === 'object') {
-      try {
-        result = JSON.stringify(rqb)
-      } catch (error) {
-        result = String(rqb)
+      getSafeBody(rqb: any): string {
+        let result = ''
+        if (typeof rqb === 'object') {
+          try {
+            result = JSON.stringify(rqb)
+          } catch (error) {
+            result = String(rqb)
+          }
+        } else {
+          result = String(result)
+        }
+        return result
       }
-    } else {
-      result = String(result)
     }
-    return result
+    return Promise.resolve({ default: middleware })
   }
 }

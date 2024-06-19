@@ -39,11 +39,19 @@ Next, run the command below to configure the SDK using ace:
 node ace configure apitoolkit-adonis
 ```
 
-Then, register the middleware by adding `apitoolkit-adonis` to your global middleware list in the `start/kernel.js|ts` file like so:
+Then, register the middleware by adding the `apitoolkit-adonis` client to your global middleware list in the `start/kernel.js|ts` file like so:
 
 ```js
+import server from "@adonisjs/core/services/server"
+import APIToolkit from "apitoolkit-adonis"
+
+const client = new APIToolkit();
+
 server.use([
-  () => import('apitoolkit-adonis'),
+  () => import("#middleware/container_bindings_middleware"),
+  () => import("#middleware/force_json_response_middleware"),
+  () => import("@adonisjs/cors/cors_middleware"),
+  () => client.middleware(),
 ])
 ```
 
@@ -54,8 +62,10 @@ import { defineConfig } from 'apitoolkit-adonis'
 
 export default defineConfig({
   apiKey: "{ENTER_YOUR_API_KEY_HERE}",
-  debug: false // Set to true to enable debug mode
-})
+  debug: false,
+  tags: ["environment: production", "region: us-east-1"],
+  serviceVersion: "v2.0",
+});
 ```
 
 > [!NOTE]

@@ -136,6 +136,7 @@ export default class APIToolkitMiddleware {
   public middleware() {
     const project_id = this.#project_id
     const config = this.#config
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const client = this
     class middleware {
       #project_id: string | undefined

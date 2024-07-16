@@ -17,10 +17,10 @@ const defaultConfig = {
 }
 
 export default class APIToolkitMiddleware {
-  #topicName: string
+  #topicName: string | undefined
   #topic: Topic | undefined
   #pubsub: PubSub | undefined
-  #project_id: string
+  #project_id: string | undefined
   #config: APIToolkitConfig
   publishMessage: (payload: Payload) => void
   constructor() {
@@ -30,13 +30,22 @@ export default class APIToolkitMiddleware {
     let pubsubClient: any
     if (!clientMetadata || configs.apiKey != '') {
       clientMetadata = this.getClientMetadata(rootURL, configs.apiKey)
-      pubsubClient = new PubSub({
-        projectId: clientMetadata.pubsub_project_id,
-        authClient: new PubSub().auth.fromJSON(clientMetadata.pubsub_push_service_account),
-      })
+      if (clientMetadata) {
+        pubsubClient = new PubSub({
+          projectId: clientMetadata.pubsub_project_id,
+          authClient: new PubSub().auth.fromJSON(clientMetadata.pubsub_push_service_account),
+        })
+        const { topic_id, project_id } = clientMetadata
+        this.#topicName = topic_id
+        this.#pubsub = pubsubClient
+        this.#project_id = project_id
+      } else {
+        this.#topicName = undefined
+        this.#pubsub = pubsubClient
+        this.#project_id = undefined
+      }
     }
 
-    const { topic_id, project_id } = clientMetadata
     if (configs.debug) {
       console.log('apitoolkit:  initialized successfully')
       console.dir(pubsubClient)
@@ -51,9 +60,6 @@ export default class APIToolkitMiddleware {
       )
     }
 
-    this.#topicName = topic_id
-    this.#pubsub = pubsubClient
-    this.#project_id = project_id
     this.#config = configs
     if (this.#pubsub && this.#topicName) {
       this.#topic = this.#pubsub?.topic(this.#topicName)
@@ -116,7 +122,14 @@ export default class APIToolkitMiddleware {
         Accept: 'application/json',
       },
     })
-    if (!resp.ok) throw new Error(`Error getting apitoolkit client_metadata ${resp.status}`)
+    if (!resp.ok) {
+      if (resp.status === 401) {
+        throw new Error('APIToolkit Error: Please check your API Key')
+      } else {
+        console.error(`Error getting apitoolkit client_metadata ${resp.status}`)
+      }
+      return
+    }
     return resp.json() as ClientMetadata
   }
 
@@ -125,14 +138,14 @@ export default class APIToolkitMiddleware {
     const config = this.#config
     const client = this
     class middleware {
-      #project_id: string
+      #project_id: string | undefined
       #config: APIToolkitConfig
       constructor() {
         this.#project_id = project_id
         this.#config = config
       }
       public async handle({ request, response }: HttpContext, next: NextFn) {
-        if (this.#config?.disable) {
+        if (this.#config?.disable || !this.#project_id) {
           await next()
           return
         }

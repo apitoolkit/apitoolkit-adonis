@@ -18,7 +18,8 @@
     "copy:files": "copyfiles \"stubs/**/*.stub\" build",
     "copy:instructions_md": "copyfiles \"instructions.md\" build",
     "build": "npm run compile",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "version": "git add -A ."
   },
   "repository": {
     "type": "git",

@@ -10,6 +10,7 @@ import { APIToolkitConfig, ClientMetadata, Payload } from '../types.js'
 import config from '@adonisjs/core/services/config'
 import { observeAxiosGlobal, observeAxiosNotWebContext } from '../axios.js'
 import { AxiosStatic } from 'axios'
+import { reportError } from '../reportErrors.js'
 
 const defaultConfig = {
   rootURL: 'https://app.apitoolkit.io',
@@ -146,6 +147,10 @@ export default class APIToolkitMiddleware {
         this.#config = config
       }
       public async handle({ request, response }: HttpContext, next: NextFn) {
+        if (this.#config?.debug) {
+          console.log('APIToolkit: adonisjs middleware called')
+        }
+
         if (this.#config?.disable || !this.#project_id) {
           await next()
           return
@@ -163,43 +168,49 @@ export default class APIToolkitMiddleware {
           }
         }
         const reqBody = this.getSafeBody(request.body())
-        await next()
-        if (this.#config?.debug) {
-          console.log('APIToolkit: adonisjs middleware called')
-        }
-        const respBody = this.getSafeBody(response.getBody())
-        const errors = ctx?.apitoolkitData.errors || []
-        if (this.#project_id) {
-          const payload = buildPayload({
-            start_time,
-            reqBody,
-            respBody,
-            requestHeaders: request.headers(),
-            responseHeaders: response.getHeaders(),
-            reqParams: request.params(),
-            status_code: response.response.statusCode,
-            raw_url: request.url(true),
-            url_path: request.ctx?.route?.pattern || '',
-            reqQuery: request.qs(),
-            method: request.method(),
-            host: request.hostname() || '',
-            redactHeaderLists: this.#config?.redactHeaders ?? [],
-            redactRequestBody: this.#config?.redactRequestBody ?? [],
-            redactResponseBody: this.#config?.redactResponseBody ?? [],
-            errors,
-            sdk_type: 'JsAdonis',
-            service_version: this.#config?.serviceVersion,
-            tags: this.#config?.tags ?? [],
-            msg_id,
-            parent_id: undefined,
-            project_id: this.#project_id,
-          })
+        let serverError = null
+        try {
+          await next()
+        } catch (error) {
+          serverError = error
+          reportError(serverError)
+          throw error
+        } finally {
+          const respBody = this.getSafeBody(response.getBody())
+          const errors = ctx?.apitoolkitData.errors || []
+          const statusCode = serverError !== null ? 500 : response.response.statusCode
+          if (this.#project_id) {
+            const payload = buildPayload({
+              start_time,
+              reqBody,
+              respBody,
+              requestHeaders: request.headers(),
+              responseHeaders: response.getHeaders(),
+              reqParams: request.params(),
+              status_code: statusCode,
+              raw_url: request.url(true),
+              url_path: request.ctx?.route?.pattern || '',
+              reqQuery: request.qs(),
+              method: request.method(),
+              host: request.hostname() || '',
+              redactHeaderLists: this.#config?.redactHeaders ?? [],
+              redactRequestBody: this.#config?.redactRequestBody ?? [],
+              redactResponseBody: this.#config?.redactResponseBody ?? [],
+              errors,
+              sdk_type: 'JsAdonis',
+              service_version: this.#config?.serviceVersion,
+              tags: this.#config?.tags ?? [],
+              msg_id,
+              parent_id: undefined,
+              project_id: this.#project_id,
+            })
 
-          if (this.#config?.debug) {
-            console.log('APIToolkit: publish prepared payload ')
-            console.dir(payload)
+            if (this.#config?.debug) {
+              console.log('APIToolkit: publish prepared payload ')
+              console.dir(payload)
+            }
+            client.publishMessage(payload)
           }
-          client.publishMessage(payload)
         }
       }
       getSafeBody(rqb: any): string {

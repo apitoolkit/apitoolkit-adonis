@@ -1,6 +1,7 @@
-declare module '@ioc:APIToolkit' {
-  import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-  import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+declare module "@ioc:APIToolkit" {
+  import { ApplicationContract } from "@ioc:Adonis/Core/Application";
+  import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+  import { AxiosStatic } from "axios";
 
   export type ClientMetadata = {
     project_id: string;
@@ -20,15 +21,15 @@ declare module '@ioc:APIToolkit' {
     serviceVersion?: string;
     tags?: string[];
     disable?: boolean;
-
-  }
+    monitorAxios?: AxiosStatic;
+  };
 
   export interface APIToolkitMiddlewareContract {
-    new(application: ApplicationContract): {
-      handle(ctx: HttpContextContract, next: () => Promise<void>): any
-    }
+    new (application: ApplicationContract): {
+      handle(ctx: HttpContextContract, next: () => Promise<void>): any;
+    };
   }
 
-  const APIToolkitMiddleware: APIToolkitMiddlewareContract
-  export default APIToolkitMiddleware
+  const APIToolkitMiddleware: APIToolkitMiddlewareContract;
+  export default APIToolkitMiddleware;
 }

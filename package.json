@@ -1,6 +1,6 @@
 {
   "name": "apitoolkit-adonis",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "APIToolkit SDK for adonisjs",
   "main": "build/providers/APIToolkitProvider.js",
   "scripts": {
